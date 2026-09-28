@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مهامي</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #1a1d29;
+      color: #fff;
+    }
+    .app { max-width: 500px; margin: auto; padding: 20px; }
+    h1 { text-align: center; }
+    .row { display: flex; gap: 8px; }
+    input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #6c5ce7;
+      color: #fff;
+      font-size: 16px;
+    }
+    ul { list-style: none; padding: 0; }
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #262a3a;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+    }
+    li.done span { text-decoration: line-through; opacity: .5; }
+    li button { background: #d63031; padding: 6px 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>مهامي</h1>
+    <div class="row">
+      <input id="task" placeholder="اكتب مهمة...">
+      <button onclick="addTask()">إضافة</button>
+    </div>
+    <ul id="list"></ul>
+  </div>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+
+    function save() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+      render();
+    }
+
+    function addTask() {
+      const input = document.getElementById("task");
+      if (!input.value.trim()) return;
+      tasks.push({ text: input.value, done: false });
+      input.value = "";
+      save();
+    }
+
+    function toggle(i) {
+      tasks[i].done = !tasks[i].done;
+      save();
+    }
+
+    function remove(i) {
+      tasks.splice(i, 1);
+      save();
+    }
+
+    function render() {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      tasks.forEach((t, i) => {
+        const li = document.createElement("li");
+        if (t.done) li.className = "done";
+        li.innerHTML = `<span onclick="toggle(${i})">${t.text}</span>
+                        <button onclick="remove(${i})">حذف</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>
